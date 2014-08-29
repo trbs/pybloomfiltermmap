@@ -32,6 +32,10 @@ on a different machine):
     >>> 'apple' in fruit
     True
 
+Filters can also be loaded back into read-only mode:
+
+    >>> fruit = pybloomfilter.BloomFilter.open('/tmp/words.bloom', mode='r')
+
 ## Install
 
 You may or may not want to use Cython. If you have it installed, the

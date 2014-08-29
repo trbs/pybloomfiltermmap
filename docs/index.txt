@@ -51,6 +51,11 @@ We may later load the filter (possibly on a different machine) using::
     print 'apple' in bf
     #outputs True
 
+To open an exiting filer in read-only mode use::
+
+    bf = BloomFilter.open('filter.bloom', mode='r')
+
+
 Reference
 ------------
 
