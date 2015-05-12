@@ -42,6 +42,7 @@ cdef class BloomFilter:
     cdef int _closed
     cdef int _in_memory
     cdef int _mode
+    cdef unicode _filename
     cdef public ReadFile
 
     def __cinit__(self, capacity, error_rate, filename=None, perm=0755, mode=None):
@@ -49,9 +50,15 @@ cdef class BloomFilter:
         cdef long long num_bits
         self._closed = 0
         self._in_memory = 0
+        self._filename = u""
         self.ReadFile = self.__class__.ReadFile
         if filename is NoConstruct:
             return
+
+        if isinstance(filename, str):
+            filename = unicode(filename)
+
+        self._filename = filename
 
         if capacity is self.ReadFile:
             if mode is None:
@@ -194,11 +201,16 @@ cdef class BloomFilter:
         return self._bf.array.fd
 
     def __repr__(self):
-        self._assert_open()
         my_name = self.__class__.__name__
-        return '<%s capacity: %d, error: %0.3f, num_hashes: %d>' % (
-            my_name, self._bf.max_num_elem, self._bf.error_rate,
-            self._bf.num_hashes)
+        filename = self._filename
+        if self._in_memory == 1:
+            filename = ":memory:"
+        if self._closed != 0:
+            return '<%s filename: %s closed>' % (my_name, filename)
+        else:
+            return '<%s filename: %s capacity: %d, error: %0.3f, num_hashes: %d>' % (
+                my_name, filename, self._bf.max_num_elem,
+                self._bf.error_rate, self._bf.num_hashes)
 
     def __str__(self):
         return self.__repr__()
